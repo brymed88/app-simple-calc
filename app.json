@@ -1,13 +1,14 @@
 {
    "expo": {
-      "name": "mini_calc",
-      "slug": "mini_calc",
+      "name": "minimalist_calculator",
+      "slug": "minimalist_calculator",
       "version": "1.0.0",
       "web": {
          "favicon": "./assets/favicon.png"
       },
       "experiments": {
-         "tsconfigPaths": true
+         "tsconfigPaths": true,
+         "reactCanary": true
       },
       "plugins": [],
       "orientation": "portrait",
@@ -27,7 +28,7 @@
             "foregroundImage": "./assets/adaptive-icon.png",
             "backgroundColor": "#000000"
          },
-         "package": "com.oakomdigital.mini_calc"
+         "package": "com.oakomdigital.minimalist_calculator"
       },
       "extra": {
          "eas": {

@@ -1,34 +1,30 @@
 import { useState, useEffect } from 'react'
-import { SafeAreaView, Text, View } from 'react-native'
+import { SafeAreaView, Text, View, Appearance } from 'react-native'
 import './global.css'
-import Button from 'components/Button'
-import { ThemeProvider } from 'contexts/ThemeContext'
+import Button from './components/Button'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { Delete } from 'lucide-react-native'
-import { colorScheme } from 'nativewind'
-
-// Define the layout of calculator buttons
 
 const buttons = [
-   ['C', '(', ')', '%'], // First row of buttons
-   ['7', '8', '9', '/'], // Second row of buttons
-   ['4', '5', '6', '*'], // Third row of buttons
-   ['1', '2', '3', '-'], // Fourth row of buttons
-   ['+/-', '0', '.', '+'],
-   ['='], // Fifth row of buttons
+   ['C', '( )', '%', '/'], // First row of buttons
+   ['7', '8', '9', '*'], // Second row of buttons
+   ['4', '5', '6', '-'], // Third row of buttons
+   ['1', '2', '3', '+'], // Fourth row of buttons
+   ['+/-', '0', '.', '='],
 ]
 
 const App = () => {
    const [input, setInput] = useState('')
    const [result, setResult] = useState('')
 
-   const isDarkMode = colorScheme.get() === 'dark'
+   const isDarkMode = Appearance.getColorScheme() === 'dark'
 
    const getChar = (input: string, fromEnd: number) => input.charAt(input.length - fromEnd)
 
    useEffect(() => {
       try {
          if (input) {
-            let finalInput = input.replace(/×/g, '*').replace(/÷/g, '/')
+            let finalInput = input.replace(/×/g, '*').replace(/÷/g, '/').replace(' ', '')
             const stripped =
                getChar(finalInput, 1) === ')' || /\d$/.test(finalInput)
                   ? finalInput
@@ -52,66 +48,89 @@ const App = () => {
       const operatorArr = ['/', '*', '-', '+']
 
       if (!isNumericBtn) {
-         // EX.. only allow one /
-         if (btn === '(' || btn === ')') {
+         // Only allow one operator, ex.. only allow one /
+         if (btn === getChar(input, 1) && btn !== '( )') return
+
+         // Parenthesis button
+         if (btn === '( )') {
+            // if prev number
+            if (numRegEx.test(getChar(input, 1))) setInput(input + '*(')
+
+            // if prev operator
+            if (operatorArr.includes(getChar(input, 1))) setInput(input + '(')
+
+            // if prev open parenthesis
+            if (getChar(input, 1) === '(') setInput(input + '(')
+
+            // if prev close parenthesis
+            if (getChar(input, 1) === ')') setInput(input + '*(')
+
+            // if there is a ( but no closing ) and prev is number
+            if (input.includes('(') && numRegEx.test(getChar(input, 1))) setInput(input + ')')
+
+            return
+         }
+
+         //if operator
+         if (operatorArr.includes(btn)) {
+            // Replace operator with another
+            if (operatorArr.includes(getChar(input, 1))) {
+               setInput(input.slice(0, -1) + btn)
+               return
+            }
             setInput(input + btn)
             return
          }
-         if (btn === getChar(input, 1)) return
 
-         // Replace operator with another
-         if (operatorArr.includes(getChar(input, 1)) && operatorArr.includes(btn)) {
-            let nText = input.slice(0, -1)
-            setInput(nText + btn)
-            return
-         }
-      }
+         if (btn === 'del') setInput(input.slice(0, -1))
 
-      switch (btn) {
-         case 'del':
-            setInput(input.slice(0, -1))
-            break
-         case 'C':
-            setInput('')
-            setResult('')
-            break
-         case '=':
-            setInput(result)
-            break
-         case '+/-':
+         if (btn === 'C') setInput('')
+
+         if (btn === '=') setInput(result)
+
+         if (btn === '+/-') {
             if (input.startsWith('-')) setInput(input.substring(1))
             else setInput('-' + input)
-            break
-         default:
-            setInput((prev) => prev + btn)
-            break
+         }
+         return
       }
+
+      setInput((prev) => prev + btn)
    }
 
    return (
       <ThemeProvider>
-         <SafeAreaView className="flex flex-1 justify-between bg-background px-4 py-8">
+         <SafeAreaView className="flex w-full flex-1 items-center justify-between bg-background py-8">
             {/* Display the input and result */}
-            <View className="flex items-end gap-4 p-0.5">
-               <Text className="text-3xl text-text/50 dark:text-text/70">{input}</Text>
+            <View className="flex w-10/12 items-end gap-8 p-0.5 pt-10">
+               <Text className="text-2xl text-text/50 dark:text-text/70" testID="input-box">
+                  {input}
+               </Text>
                {/* Show the current input */}
-               <Text className="text-6xl text-text">{result}</Text>
+               <Text className="text-6xl text-text" testID="result-box">
+                  {result}
+               </Text>
                {/* Show the calculated result */}
             </View>
 
             {/* Render the calculator buttons */}
-            <View>
-               <View className="flex flex-row justify-end">
+            <View className="flex w-10/12 flex-col items-center gap-1">
+               <View className="flex w-full flex-row justify-end border-b border-b-slate-100 dark:border-b-slate-800">
+                  {/* <Button
+                     text="settings"
+                     icon={<Settings color={isDarkMode ? '#fff' : '#000'} size={24} />}
+                     handlePress={openSettings}
+                  /> */}
                   <Button
                      text="del"
-                     icon={<Delete color={isDarkMode ? '#fff' : '#000'} size={28} />}
+                     icon={<Delete color={isDarkMode ? '#fff' : '#000'} size={24} />}
                      handlePress={handlePress}
                      variant="icon"
                   />
                </View>
 
                {buttons.map((row, rowIndex) => (
-                  <View key={rowIndex} className="grid grid-cols-4 justify-end w-full gap-2 p-1">
+                  <View key={rowIndex} className="flex w-full flex-row justify-between">
                      {row.map((btn, colIndex) => (
                         <Button
                            key={colIndex}

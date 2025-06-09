@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { SafeAreaView, useColorScheme as useDeviceColorScheme } from 'react-native'
-import { useColorScheme } from 'nativewind'
-import { themes } from 'utils/tailwind'
+import { SafeAreaView, useColorScheme as useDeviceColorScheme, Appearance } from 'react-native'
+import { vars } from 'nativewind'
 import { StatusBar } from 'expo-status-bar'
 
 type ThemeContextType = {
@@ -10,13 +9,29 @@ type ThemeContextType = {
    isSystemTheme: boolean
 }
 
+// Define theme variables
+export const themes = {
+   light: vars({
+      '--color-primary': '0 122 255', // iOS blue
+      '--color-secondary': '236 236 236', // Light gray
+      '--color-background': '255 255 255', // White
+      '--color-text': '44 44 46', // iOS blue
+   }),
+   dark: vars({
+      '--color-primary': '10 132 255', // iOS blue (dark mode)
+      '--color-secondary': '44 44 46', // Dark gray
+      '--color-background': '0 0 0', // Dark background
+      '--color-text': '255 255 255', // White
+   }),
+}
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
    const deviceTheme = useDeviceColorScheme()
 
    const [isSystemTheme, setIsSystemTheme] = useState(true)
-   const { setColorScheme } = useColorScheme()
+   const { setColorScheme } = Appearance
    const [theme, setThemeState] = useState<'light' | 'dark'>(
       deviceTheme === 'dark' ? 'dark' : 'light'
    )
