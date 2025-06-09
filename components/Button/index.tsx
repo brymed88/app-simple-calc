@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity } from 'react-native'
-import { cn } from 'utils/tailwind'
+import { cn } from '../../utils/index'
 type ButtonProps = {
    text: string
    handlePress: (text: string) => void
@@ -8,19 +8,16 @@ type ButtonProps = {
 }
 
 const variantStyles = {
-   default: 'flex-1',
+   default: '',
    equals: '',
-   icon: 'mr-2',
+   icon: '',
 }
 
 const Button = ({ text, handlePress, variant = 'default', icon }: ButtonProps) => {
    return (
       <TouchableOpacity
          onPress={() => handlePress(text)} // Handle button press
-         className={cn(
-            'size-16 items-center justify-center rounded-full bg-purple-300',
-            variantStyles[variant]
-         )}>
+         className={cn('size-20 items-center justify-center rounded-full', variantStyles[variant])}>
          {!icon ? <Text className="text-3xl text-text">{text}</Text> : icon}
       </TouchableOpacity>
    )
