@@ -6,11 +6,11 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { Delete } from 'lucide-react-native'
 
 const buttons = [
-   ['C', '( )', '%', '/'], // First row of buttons
-   ['7', '8', '9', '*'], // Second row of buttons
+   ['C', '( )', '+/-', '/'], // First row of buttons
+   ['7', '8', '9', 'x'], // Second row of buttons
    ['4', '5', '6', '-'], // Third row of buttons
    ['1', '2', '3', '+'], // Fourth row of buttons
-   ['+/-', '0', '.', '='],
+   ['00', '0', '.', '='],
 ]
 
 const App = () => {
@@ -18,26 +18,21 @@ const App = () => {
    const [result, setResult] = useState('')
 
    const isDarkMode = Appearance.getColorScheme() === 'dark'
-
    const getChar = (input: string, fromEnd: number) => input.charAt(input.length - fromEnd)
 
    useEffect(() => {
-      try {
-         if (input) {
-            let finalInput = input.replace(/×/g, '*').replace(/÷/g, '/').replace(' ', '')
-            const stripped =
-               getChar(finalInput, 1) === ')' || /\d$/.test(finalInput)
-                  ? finalInput
-                  : finalInput.slice(0, -1)
+      if (input) {
+         let finalInput = input
+            .replace(/x/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/[^-()\d/x*+.%]/g, '')
 
-            const evalResult: number = eval(stripped)
+         const evalResult: number = eval(`"use strict";(${finalInput})`)
 
-            if (evalResult % 1 !== 0) setResult(evalResult.toFixed(4).toString())
-            else setResult(evalResult.toString())
-         } else {
-            setResult('')
-         }
-      } catch (e: unknown) {
+         //TODO: allow changing decimal place preference in future
+         if (evalResult % 1 !== 0) setResult(evalResult.toFixed(3).toString())
+         else setResult(evalResult.toString())
+      } else {
          setResult('')
       }
    }, [input])
@@ -45,7 +40,7 @@ const App = () => {
    const handlePress = (btn: string) => {
       const numRegEx = /\d$/
       const isNumericBtn = numRegEx.test(btn)
-      const operatorArr = ['/', '*', '-', '+']
+      const operatorArr = ['/', 'x', '-', '+']
 
       if (!isNumericBtn) {
          // Only allow one operator, ex.. only allow one /
@@ -53,20 +48,39 @@ const App = () => {
 
          // Parenthesis button
          if (btn === '( )') {
-            // if prev number
-            if (numRegEx.test(getChar(input, 1))) setInput(input + '*(')
+            const prevChar = getChar(input, 1)
+            const isPrevCharNumeric = numRegEx.test(prevChar)
+            function isValidParenthesis(str: string) {
+               let stack = []
+               for (let i = 0; i < str.length; i++) {
+                  let char = stack[stack.length - 1]
+                  if (str[i] === '(') {
+                     stack.push(str[i])
+                  } else if (char === '(' && str[i] === ')') {
+                     stack.pop()
+                  }
+               }
+               return !stack.length
+            }
+
+            if (isPrevCharNumeric && isValidParenthesis(input)) setInput(input + '*(')
 
             // if prev operator
-            if (operatorArr.includes(getChar(input, 1))) setInput(input + '(')
+            if (operatorArr.includes(prevChar)) setInput(input + '(')
 
             // if prev open parenthesis
-            if (getChar(input, 1) === '(') setInput(input + '(')
+            if (prevChar === '(') setInput(input + '(')
 
             // if prev close parenthesis
-            if (getChar(input, 1) === ')') setInput(input + '*(')
-
-            // if there is a ( but no closing ) and prev is number
-            if (input.includes('(') && numRegEx.test(getChar(input, 1))) setInput(input + ')')
+            if (prevChar === ')') {
+               if (isValidParenthesis(input)) {
+                  setInput(input + '*(')
+               } else {
+                  setInput(input + ')')
+               }
+            }
+            // if not valid paranthesis and prev is number
+            if (!isValidParenthesis(input) && isPrevCharNumeric) setInput(input + ')')
 
             return
          }
@@ -81,6 +95,8 @@ const App = () => {
             setInput(input + btn)
             return
          }
+
+         if (btn === '.' || btn === '%') setInput(input + btn)
 
          if (btn === 'del') setInput(input.slice(0, -1))
 

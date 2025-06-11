@@ -1,53 +1,51 @@
 {
-  "expo": {
-    "name": "minimalist_calculator",
-    "slug": "minimalist_calculator",
-    "version": "1.0.0",
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "experiments": {
-      "tsconfigPaths": true,
-      "reactCanary": true
-    },
-    "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "enableProguardInReleaseBuilds": true,
-            "enableShrinkResourceslnReleaseBuilds": true,
-            "useLegacyPackaging": true
-          }
-        }
-      ]
-    ],
-    "orientation": "portrait",
-    "icon": "./assets/calc-icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#000000"
+   "expo": {
+      "name": "Simple Calc",
+      "slug": "simple_calculator",
+      "version": "1.0.0",
+      "web": {
+         "favicon": "./assets/favicon.png"
       },
-      "enableDangerousExperimentalLeanBuilds": true,
-      "package": "com.oakomdigital.minimalist_calculator"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "603b1098-2828-4f5d-9faf-d3b46fcfc708"
+      "experiments": {
+         "tsconfigPaths": true,
+         "reactCanary": true
+      },
+      "plugins": [
+         [
+            "expo-build-properties",
+            {
+               "android": {
+                  "enableProguardInReleaseBuilds": true,
+                  "enableShrinkResourceslnReleaseBuilds": true,
+                  "useLegacyPackaging": true
+               }
+            }
+         ]
+      ],
+      "orientation": "portrait",
+      "icon": "./assets/calc-icon.png",
+      "userInterfaceStyle": "light",
+      "splash": {
+         "image": "./assets/splash.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#000000"
+      },
+      "assetBundlePatterns": ["**/*"],
+      "ios": {
+         "supportsTablet": true
+      },
+      "android": {
+         "adaptiveIcon": {
+            "foregroundImage": "./assets/adaptive-icon.png",
+            "backgroundColor": "#000000"
+         },
+         "enableDangerousExperimentalLeanBuilds": true,
+         "package": "com.oakomdigital.simple_calc"
+      },
+      "extra": {
+         "eas": {
+            "projectId": "3e369ba7-3f92-4f9c-9da8-3801306c1726"
+         }
       }
-    }
-  }
+   }
 }
