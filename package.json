@@ -1,5 +1,5 @@
 {
-   "name": "mini-calc",
+   "name": "simple-calc",
    "version": "1.0.0",
    "scripts": {
       "android": "expo run:android",

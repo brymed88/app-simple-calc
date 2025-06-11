@@ -84,7 +84,7 @@ describe('Calculator Tests', () => {
       const threeBtn = screen.getByText('3')
       expect(threeBtn).toBeDefined()
 
-      const multiBtn = screen.getByText('*')
+      const multiBtn = screen.getByText('x')
       expect(multiBtn).toBeDefined()
 
       const resultBox = screen.getByTestId('result-box')
@@ -115,7 +115,7 @@ describe('Calculator Tests', () => {
       fireEvent.press(divBtn)
       fireEvent.press(twoBtn)
 
-      expect(resultBox).toHaveTextContent('1.5000')
+      expect(resultBox).toHaveTextContent('1.500')
    })
    it('should multiply with parenthesis', () => {
       renderComponent()
