@@ -19,26 +19,43 @@ const App = () => {
 
    const isDarkMode = Appearance.getColorScheme() === 'dark'
    const getChar = (input: string, fromEnd: number) => input.charAt(input.length - fromEnd)
+   const numRegEx = /\d$/
+
+   function isValidParenthesis(str: string) {
+      let stack = []
+      for (let i = 0; i < str.length; i++) {
+         let char = stack[stack.length - 1]
+         if (str[i] === '(') {
+            stack.push(str[i])
+         } else if (char === '(' && str[i] === ')') {
+            stack.pop()
+         }
+      }
+      return !stack.length
+   }
 
    useEffect(() => {
       if (input) {
          let finalInput = input
             .replace(/x/g, '*')
             .replace(/÷/g, '/')
-            .replace(/[^-()\d/x*+.%]/g, '')
+            .replace(/[^-()\d/*+.%]/g, '')
 
-         const evalResult: number = eval(`"use strict";(${finalInput})`)
+         const finalChar = getChar(finalInput, 1)
 
-         //TODO: allow changing decimal place preference in future
-         if (evalResult % 1 !== 0) setResult(evalResult.toFixed(3).toString())
-         else setResult(evalResult.toString())
+         if (isValidParenthesis(finalInput) && (!isNaN(parseInt(finalChar)) || finalChar === ')')) {
+            const evalResult: number = eval(finalInput)
+
+            //TODO: allow changing decimal place preference in future
+            if (evalResult % 1 !== 0) setResult(evalResult.toFixed(3).toString())
+            else setResult(evalResult.toString())
+         }
       } else {
          setResult('')
       }
    }, [input])
 
    const handlePress = (btn: string) => {
-      const numRegEx = /\d$/
       const isNumericBtn = numRegEx.test(btn)
       const operatorArr = ['/', 'x', '-', '+']
 
@@ -50,18 +67,6 @@ const App = () => {
          if (btn === '( )') {
             const prevChar = getChar(input, 1)
             const isPrevCharNumeric = numRegEx.test(prevChar)
-            function isValidParenthesis(str: string) {
-               let stack = []
-               for (let i = 0; i < str.length; i++) {
-                  let char = stack[stack.length - 1]
-                  if (str[i] === '(') {
-                     stack.push(str[i])
-                  } else if (char === '(' && str[i] === ')') {
-                     stack.pop()
-                  }
-               }
-               return !stack.length
-            }
 
             if (isPrevCharNumeric && isValidParenthesis(input)) setInput(input + '*(')
 

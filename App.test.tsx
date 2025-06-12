@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react-native'
 
 import App from './App'
-export const add = (a: number, b: number) => a + b
 
 const renderComponent = () => render(<App />)
 
