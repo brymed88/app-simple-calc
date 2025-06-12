@@ -116,6 +116,33 @@ describe('Calculator Tests', () => {
 
       expect(resultBox).toHaveTextContent('1.500')
    })
+   it('should add two negative numbers', () => {
+      renderComponent()
+
+      const twoBtn = screen.getByText('2')
+      expect(twoBtn).toBeDefined()
+
+      const threeBtn = screen.getByText('3')
+      expect(threeBtn).toBeDefined()
+
+      const negBtn = screen.getByText('+/-')
+      expect(negBtn).toBeDefined()
+
+      const addBtn = screen.getByText('+')
+      expect(addBtn).toBeDefined()
+
+      const resultBox = screen.getByTestId('result-box')
+      expect(resultBox).toBeDefined()
+
+      fireEvent.press(threeBtn)
+      fireEvent.press(negBtn)
+      fireEvent.press(addBtn)
+      fireEvent.press(twoBtn)
+      fireEvent.press(negBtn)
+
+      expect(resultBox).toHaveTextContent('-5')
+   })
+
    it('should multiply with parenthesis', () => {
       renderComponent()
 
@@ -143,5 +170,41 @@ describe('Calculator Tests', () => {
 
       // Should be in format 3 * (3 + 2) and equal 15
       expect(resultBox).toHaveTextContent('15')
+   })
+   it('should multiply with parenthesis negative numbers', () => {
+      renderComponent()
+
+      const twoBtn = screen.getByText('2')
+      expect(twoBtn).toBeDefined()
+
+      const threeBtn = screen.getByText('3')
+      expect(threeBtn).toBeDefined()
+
+      const negBtn = screen.getByText('+/-')
+      expect(negBtn).toBeDefined()
+
+      const parenBtn = screen.getByText('( )')
+      expect(parenBtn).toBeDefined()
+
+      const addBtn = screen.getByText('+')
+      expect(addBtn).toBeDefined()
+
+      const resultBox = screen.getByTestId('result-box')
+      expect(resultBox).toBeDefined()
+
+      fireEvent.press(threeBtn)
+      fireEvent.press(parenBtn)
+      fireEvent.press(negBtn)
+      fireEvent.press(twoBtn)
+      fireEvent.press(addBtn)
+      fireEvent.press(negBtn)
+      fireEvent.press(threeBtn)
+      fireEvent.press(parenBtn)
+      fireEvent.press(addBtn)
+      fireEvent.press(threeBtn)
+      fireEvent.press(twoBtn)
+
+      // 3 x (-2+-3) + 32
+      expect(resultBox).toHaveTextContent('17')
    })
 })

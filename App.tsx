@@ -58,26 +58,26 @@ const App = () => {
    const handlePress = (btn: string) => {
       const isNumericBtn = numRegEx.test(btn)
       const operatorArr = ['/', 'x', '-', '+']
+      const lastChar = getChar(input, 1)
 
       if (!isNumericBtn) {
          // Only allow one operator, ex.. only allow one /
-         if (btn === getChar(input, 1) && btn !== '( )') return
+         if (btn === lastChar && btn !== '( )') return
 
          // Parenthesis button
          if (btn === '( )') {
-            const prevChar = getChar(input, 1)
-            const isPrevCharNumeric = numRegEx.test(prevChar)
+            const isPrevCharNumeric = numRegEx.test(lastChar)
 
             if (isPrevCharNumeric && isValidParenthesis(input)) setInput(input + '*(')
 
             // if prev operator
-            if (operatorArr.includes(prevChar)) setInput(input + '(')
+            if (operatorArr.includes(lastChar)) setInput(input + '(')
 
             // if prev open parenthesis
-            if (prevChar === '(') setInput(input + '(')
+            if (lastChar === '(') setInput(input + '(')
 
             // if prev close parenthesis
-            if (prevChar === ')') {
+            if (lastChar === ')') {
                if (isValidParenthesis(input)) {
                   setInput(input + '*(')
                } else {
@@ -93,7 +93,7 @@ const App = () => {
          //if operator
          if (operatorArr.includes(btn)) {
             // Replace operator with another
-            if (operatorArr.includes(getChar(input, 1))) {
+            if (operatorArr.includes(lastChar)) {
                setInput(input.slice(0, -1) + btn)
                return
             }
@@ -110,8 +110,32 @@ const App = () => {
          if (btn === '=') setInput(result)
 
          if (btn === '+/-') {
-            if (input.startsWith('-')) setInput(input.substring(1))
-            else setInput('-' + input)
+            const regex = /([+\-x(*/])(?!.*[+\-x(*/])/
+            const lastOpIndex = regex.exec(input)?.index || -1
+            const digitsAfterOperator =
+               lastOpIndex === -1 ? '' : input.slice(lastOpIndex + 1, input.length)
+
+            if (input[lastOpIndex] === '-') {
+               setInput(
+                  input.substring(0, lastOpIndex) + input.substring(lastOpIndex + 1, input.length)
+               )
+               return
+            }
+
+            if (digitsAfterOperator.length === 0) {
+               if (lastOpIndex !== -1 && input[lastOpIndex] !== '-') {
+                  setInput(input + '-')
+               } else {
+                  setInput('-' + input)
+               }
+            }
+
+            if (digitsAfterOperator.length >= 1)
+               setInput(
+                  input.slice(0, input.length - digitsAfterOperator.length) +
+                     '-' +
+                     digitsAfterOperator
+               )
          }
          return
       }
