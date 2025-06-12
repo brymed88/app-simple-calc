@@ -39,7 +39,6 @@
             "foregroundImage": "./assets/adaptive-icon.png",
             "backgroundColor": "#000000"
          },
-         "enableDangerousExperimentalLeanBuilds": true,
          "package": "com.oakomdigital.simple_calc"
       },
       "extra": {
